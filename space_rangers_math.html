@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Space Rangers Math Mission — Class 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #060a1e; font-family: 'Nunito', sans-serif; min-height: 100vh; padding: 16px; }
+
+  .ws-wrap { max-width: 680px; margin: 0 auto; background: #0a0e2e; border-radius: 20px; padding: 28px 24px; }
+
+  /* Header */
+  .ws-header { text-align: center; margin-bottom: 24px; }
+  .ws-rocket { font-size: 48px; margin-bottom: 8px; }
+  .ws-title { font-family: 'Orbitron', sans-serif; font-size: 22px; color: #f9c74f; letter-spacing: 1px; margin-bottom: 4px; }
+  .ws-subtitle { font-size: 14px; color: #90e0ef; margin-bottom: 10px; }
+  .ws-badge { display: inline-block; background: rgba(249,199,79,0.12); border: 1px solid rgba(249,199,79,0.4); color: #f9c74f; font-size: 12px; padding: 4px 14px; border-radius: 20px; }
+  .ws-stars { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .ws-star { width: 30px; height: 30px; background: #131940; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 1px solid #2a3080; transition: all 0.3s; }
+
+  /* Mission bar */
+  .mission-bar { display: flex; align-items: flex-start; gap: 12px; background: #111840; border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; border: 1px solid #2a3580; }
+  .mission-icon { font-size: 28px; flex-shrink: 0; }
+  .mission-text { font-size: 13px; color: #caf0f8; line-height: 1.6; }
+
+  /* Progress */
+  .progress-wrap { background: #111840; border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; border: 1px solid #2a3580; }
+  .progress-label { font-size: 12px; color: #90e0ef; margin-bottom: 8px; display: flex; justify-content: space-between; font-weight: 600; }
+  .progress-bar { background: #1a2060; border-radius: 20px; height: 12px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #4cc9f0, #f9c74f); border-radius: 20px; transition: width 0.5s ease; width: 0%; }
+
+  /* Question cards */
+  .q-card { background: #111840; border-radius: 14px; padding: 18px 16px; margin-bottom: 14px; border: 1.5px solid #2a3580; transition: border-color 0.3s, background 0.3s; }
+  .q-card.correct { border-color: #43d483; background: #0a2018; }
+  .q-card.wrong { border-color: #f94144; background: #200a0a; }
+  .q-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .q-num { background: rgba(249,199,79,0.12); border: 1px solid rgba(249,199,79,0.5); color: #f9c74f; font-family: 'Orbitron', sans-serif; font-size: 10px; border-radius: 6px; padding: 4px 9px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; letter-spacing: 0.5px; }
+  .q-text { font-size: 14px; color: #e0f4ff; line-height: 1.6; font-weight: 600; }
+
+  /* Input */
+  .q-input { width: 100%; background: #060a1e; border: 1.5px solid #2a3580; border-radius: 10px; padding: 10px 14px; color: #fff; font-size: 15px; font-family: 'Nunito', sans-serif; outline: none; transition: border-color 0.2s; }
+  .q-input:focus { border-color: #4cc9f0; }
+  .q-input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* MCQ options */
+  .q-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .q-opt { background: #060a1e; border: 1.5px solid #2a3580; color: #caf0f8; border-radius: 10px; padding: 8px 18px; font-size: 14px; cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 600; transition: all 0.15s; }
+  .q-opt:hover:not(:disabled) { border-color: #4cc9f0; background: #1a2a50; }
+  .q-opt.selected { border-color: #4cc9f0; background: #1a3a60; color: #fff; }
+  .q-opt.opt-correct { border-color: #43d483 !important; background: #0a2518 !important; color: #43d483 !important; }
+  .q-opt.opt-wrong { border-color: #f94144 !important; background: #250a0a !important; color: #f94144 !important; }
+  .q-opt:disabled { cursor: not-allowed; }
+
+  /* Feedback */
+  .q-feedback { font-size: 13px; margin-top: 10px; padding: 8px 12px; border-radius: 8px; display: none; font-weight: 600; line-height: 1.5; }
+  .q-feedback.show { display: block; }
+  .fb-correct { background: #0a2518; color: #43d483; border: 1px solid rgba(67,212,131,0.3); }
+  .fb-wrong { background: #250a0a; color: #ff9999; border: 1px solid rgba(249,65,68,0.3); }
+
+  /* Submit */
+  .submit-btn { width: 100%; background: #f9c74f; color: #0a0e2e; font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700; border: none; border-radius: 12px; padding: 16px; cursor: pointer; margin-top: 8px; letter-spacing: 1px; transition: opacity 0.2s, transform 0.1s; }
+  .submit-btn:hover:not(:disabled) { opacity: 0.92; transform: scale(1.01); }
+  .submit-btn:active:not(:disabled) { transform: scale(0.99); }
+  .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* Result panel */
+  .result-panel { background: #111840; border-radius: 16px; padding: 24px 20px; text-align: center; border: 1.5px solid rgba(249,199,79,0.4); margin-top: 20px; display: none; }
+  .result-panel.show { display: block; }
+  .result-trophy { font-size: 48px; margin-bottom: 8px; }
+  .result-score { font-family: 'Orbitron', sans-serif; font-size: 34px; color: #f9c74f; margin: 8px 0; }
+  .result-planets { font-size: 32px; letter-spacing: 6px; margin: 10px 0; }
+  .result-msg { font-size: 14px; color: #caf0f8; margin-bottom: 16px; line-height: 1.6; font-weight: 600; }
+  .retry-btn { background: transparent; border: 1.5px solid #4cc9f0; color: #4cc9f0; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; border-radius: 10px; padding: 10px 24px; cursor: pointer; transition: background 0.15s; }
+  .retry-btn:hover { background: #1a3a60; }
+
+  /* Notion box */
+  .notion-box { background: #060a1e; border: 1px dashed rgba(76,201,240,0.4); border-radius: 12px; padding: 16px; margin-top: 20px; text-align: left; }
+  .notion-title { font-size: 13px; color: #90e0ef; font-weight: 700; margin-bottom: 10px; letter-spacing: 0.5px; }
+  .notion-step { font-size: 13px; color: #caf0f8; margin-bottom: 6px; line-height: 1.6; padding-left: 2px; }
+  .notion-step strong { color: #f9c74f; }
+  .notion-code { background: #111840; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #f9c74f; font-family: monospace; margin-top: 10px; line-height: 1.7; border: 1px solid rgba(249,199,79,0.2); }
+
+  /* Divider */
+  .divider { border: none; border-top: 1px solid #1a2060; margin: 20px 0; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .ws-wrap { padding: 20px 16px; }
+    .ws-title { font-size: 17px; }
+    .q-opt { padding: 8px 12px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ws-wrap">
+
+  <!-- Header -->
+  <div class="ws-header">
+    <div class="ws-rocket">🚀</div>
+    <div class="ws-title">Space Rangers Math Mission</div>
+    <div class="ws-subtitle">Class 3 · Addition &amp; Subtraction Adventure</div>
+    <div class="ws-badge">⭐ Mission: Reach Planet Numberia</div>
+    <div class="ws-stars" id="starRow"></div>
+  </div>
+
+  <!-- Mission briefing -->
+  <div class="mission-bar">
+    <div class="mission-icon">👨‍🚀</div>
+    <div class="mission-text">Commander Nova needs your help! Solve all math problems to power up the rocket and reach Planet Numberia. Each correct answer fuels one engine! 🔥 Good luck, Space Ranger!</div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>🛸 Mission Progress</span>
+      <span id="progressText">0 / 11 answered</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- Questions -->
+  <div id="questionsContainer"></div>
+
+  <hr class="divider"/>
+
+  <button class="submit-btn" id="submitBtn" onclick="submitAll()">🚀 Launch &amp; Submit Mission</button>
+
+  <!-- Result -->
+  <div class="result-panel" id="resultPanel">
+    <div class="result-trophy">🏆</div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-planets" id="resultPlanets"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="retry-btn" onclick="retryMission()">🔄 Retry Mission</button>
+
+    <div class="notion-box">
+      <div class="notion-title">📎 How to add this to MathNest &amp; Notion</div>
+      <div class="notion-step">1️⃣ Save this file as <strong>space-math-class3.html</strong> on your computer.</div>
+      <div class="notion-step">2️⃣ Go to <strong>tiiny.host</strong> or <strong>app.netlify.com/drop</strong> and drag &amp; drop the file. You'll get a free public URL instantly.</div>
+      <div class="notion-step">3️⃣ Or deploy to <strong>GitHub Pages</strong> — push to a repo, enable Pages in settings, get a free URL.</div>
+      <div class="notion-step">4️⃣ In <strong>MathNest</strong> → Teacher Dashboard → Add Worksheet → paste the URL → assign to Class 3 → mark Visible.</div>
+      <div class="notion-step">5️⃣ In <strong>Notion</strong> → open your Class 3 page → type <strong>/embed</strong> → paste the same URL. Worksheet loads live inside Notion!</div>
+      <div class="notion-code">
+        💡 Notion tip: Share settings → "Anyone with the link → Can view"<br/>
+        so students can open without a Notion account.<br/>
+        💡 GitHub tip: File must be named index.html or linked correctly in your repo.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  { id:1,  type:'input', emoji:'🛸', text:'Ranger Zara has 34 moon rocks. She collects 25 more on Planet X. How many does she have now?',                                         answer:'59',  hint:'34 + 25 = 59' },
+  { id:2,  type:'mcq',   emoji:'🌙', text:'The rocket has 80 fuel cells. It uses 37 on the journey. How many are left?',                                                        options:['43','53','47','33'], answer:'43',  hint:'80 − 37 = 43' },
+  { id:3,  type:'input', emoji:'⭐', text:'Space Station Alpha has 56 astronauts. 28 more arrive from Earth. How many astronauts in total?',                                    answer:'84',  hint:'56 + 28 = 84' },
+  { id:4,  type:'mcq',   emoji:'🪐', text:'Planet Numberia has 100 craters. Scientists fill in 62. How many craters remain?',                                                   options:['38','42','48','28'], answer:'38',  hint:'100 − 62 = 38' },
+  { id:5,  type:'input', emoji:'🌟', text:'Commander Nova collects 47 star maps and Ranger Leo collects 36. How many maps altogether?',                                         answer:'83',  hint:'47 + 36 = 83' },
+  { id:6,  type:'mcq',   emoji:'🤖', text:'Robot R2 carries 90 space crystals but drops 45 on Mars. How many does it still have?',                                             options:['55','45','35','50'], answer:'45',  hint:'90 − 45 = 45' },
+  { id:7,  type:'input', emoji:'🚀', text:'The rocket travels 65 km on day 1 and 78 km on day 2. How far did it travel in total?',                                             answer:'143', hint:'65 + 78 = 143' },
+  { id:8,  type:'mcq',   emoji:'👾', text:'There are 120 alien flowers on Planet Zog. 55 are yellow. How many are NOT yellow?',                                                options:['65','75','55','85'], answer:'65',  hint:'120 − 55 = 65' },
+  { id:9,  type:'input', emoji:'🌈', text:'Ranger Mia spots 49 shooting stars before lunch and 57 after lunch. How many in total?',                                            answer:'106', hint:'49 + 57 = 106' },
+  { id:10, type:'mcq',   emoji:'🔭', text:'The space telescope finds 200 new stars. 132 are already named. How many still need names?',                                        options:['68','78','58','88'], answer:'68',  hint:'200 − 132 = 68' },
+  { id:11, type:'input', emoji:'💫', text:'Planet Numberia has 3 moons: the first has 24 craters, the second has 38, and the third has 19. How many craters in all?',         answer:'81',  hint:'24 + 38 + 19 = 81' }
+];
+
+let answers = {};
+let submitted = false;
+
+function buildStars() {
+  const row = document.getElementById('starRow');
+  row.innerHTML = '';
+  questions.forEach((_, i) => {
+    const s = document.createElement('div');
+    s.className = 'ws-star';
+    s.id = 'star_' + i;
+    s.textContent = '○';
+    row.appendChild(s);
+  });
+}
+
+function buildQuestions() {
+  const c = document.getElementById('questionsContainer');
+  c.innerHTML = '';
+  questions.forEach((q) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'card_' + q.id;
+
+    let inner = `<div class="q-top">
+      <span class="q-num">Q${q.id}</span>
+      <div class="q-text">${q.emoji} ${q.text}</div>
+    </div>`;
+
+    if (q.type === 'input') {
+      inner += `<input class="q-input" id="inp_${q.id}" type="text" inputmode="numeric" placeholder="Type your answer here..." autocomplete="off" oninput="onAnswer(${q.id}, this.value.trim())"/>`;
+    } else {
+      inner += `<div class="q-options" id="opts_${q.id}">`;
+      q.options.forEach(opt => {
+        inner += `<button class="q-opt" onclick="selectOpt(${q.id}, '${opt}', this)">${opt}</button>`;
+      });
+      inner += `</div>`;
+    }
+
+    inner += `<div class="q-feedback" id="fb_${q.id}"></div>`;
+    card.innerHTML = inner;
+    c.appendChild(card);
+  });
+}
+
+function onAnswer(id, val) {
+  if (submitted) return;
+  if (val === '') { delete answers[id]; } else { answers[id] = val; }
+  updateProgress();
+}
+
+function selectOpt(id, val, btn) {
+  if (submitted) return;
+  document.querySelectorAll('#opts_' + id + ' .q-opt').forEach(o => o.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[id] = val;
+  updateProgress();
+}
+
+function updateProgress() {
+  const count = Object.keys(answers).filter(k => answers[k] !== '').length;
+  const pct = Math.round((count / questions.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = count + ' / ' + questions.length + ' answered';
+}
+
+function submitAll() {
+  if (submitted) return;
+  submitted = true;
+  let score = 0;
+
+  questions.forEach((q, idx) => {
+    const userAns = (answers[q.id] || '').toString().trim();
+    const correct = userAns === q.answer;
+    if (correct) score++;
+
+    const card = document.getElementById('card_' + q.id);
+    card.classList.add(correct ? 'correct' : 'wrong');
+
+    const fb = document.getElementById('fb_' + q.id);
+    fb.className = 'q-feedback show ' + (correct ? 'fb-correct' : 'fb-wrong');
+    fb.textContent = correct
+      ? '✅ Awesome, Space Ranger! ' + q.hint
+      : '❌ Not quite! Answer: ' + q.hint;
+
+    const star = document.getElementById('star_' + idx);
+    star.textContent = correct ? '⭐' : '✗';
+    if (correct) star.style.background = '#1a2a10';
+
+    if (q.type === 'mcq') {
+      document.querySelectorAll('#opts_' + q.id + ' .q-opt').forEach(o => {
+        o.disabled = true;
+        if (o.textContent === q.answer) o.classList.add('opt-correct');
+        else if (o.classList.contains('selected')) o.classList.add('opt-wrong');
+      });
+    } else {
+      const inp = document.getElementById('inp_' + q.id);
+      if (inp) inp.disabled = true;
+    }
+  });
+
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressText').textContent = questions.length + ' / ' + questions.length + ' answered';
+  document.getElementById('submitBtn').disabled = true;
+  showResult(score);
+}
+
+function showResult(score) {
+  const panel = document.getElementById('resultPanel');
+  panel.classList.add('show');
+  document.getElementById('resultScore').textContent = score + ' / ' + questions.length + ' correct';
+
+  const pct = score / questions.length;
+  let planets = '', msg = '';
+
+  if (pct === 1)      { planets = '🪐🪐🪐🪐🪐'; msg = '🎉 PERFECT SCORE! You are a true Space Ranger Commander! Planet Numberia is saved!'; }
+  else if (pct >= 0.8){ planets = '🪐🪐🪐🪐';   msg = '🚀 Excellent mission! You\'re almost a Commander. One more round and you\'ll be perfect!'; }
+  else if (pct >= 0.6){ planets = '🪐🪐🪐';     msg = '⭐ Good job, Ranger! The rocket made it halfway. Keep practising!'; }
+  else if (pct >= 0.4){ planets = '🪐🪐';       msg = '💫 Nice try! Review the hints and blast off again!'; }
+  else                { planets = '🪐';          msg = '🌱 Keep going, Space Cadet! Every astronaut starts somewhere. Try again!'; }
+
+  document.getElementById('resultPlanets').textContent = planets;
+  document.getElementById('resultMsg').textContent = msg;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retryMission() {
+  answers = {};
+  submitted = false;
+  document.getElementById('resultPanel').classList.remove('show');
+  document.getElementById('submitBtn').disabled = false;
+  buildStars();
+  buildQuestions();
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildStars();
+buildQuestions();
+</script>
+</body>
+</html>
